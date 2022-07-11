@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <title>Home</title>
+</head>
+
+<body>
+  <div class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p id="close">&times;</p>
+      </div>
+      <div class="modal-body">
+        <form action="{{ url_for('add_book') }}" , method="post">
+          <div class="input">
+            <label for="">Book ID Number</label>
+            <input type="text" name="id-number" id="" placeholder="Enter Book ID Number" required>
+          </div>
+          <div class="input">
+            <label for="">Book Title</label>
+            <input type="text" name="book-title" id="" placeholder="Enter Book Title" required>
+          </div>
+          <div class="input">
+            <label for="">Book Author</label>
+            <input type="text" name="book-author" id="" placeholder="Enter Book Author" required>
+          </div>
+          <div class="input">
+            <label for="">Book Category</label>
+            <input type="text" name="book-category" id="" placeholder="Enter Book Category" required>
+          </div>
+          <div class="input">
+            <label for="">Book Price</label>
+            <input type="text" name="book-price" id="" placeholder="Enter Book Price" required>
+          </div>
+          <div class="input">
+            <label for="">Book Quantity</label>
+            <input type="text" name="book-quantity" id="" placeholder="Enter Book Quantity" required>
+          </div>
+          <button type="submit">Add Book</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="tops">
+    {% for category, message in messages %}
+    <div class="alert alert-{{category}}">
+      {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+  <nav>
+    <div id="logo">
+      <h4>Library System</h4>
+    </div>
+    <div class="links">
+      <p onclick="openView(event, 'student')" id="defaultOpen">Students</p>
+      <p onclick="openView(event, 'books')">Books</p>
+      <p onclick="openView(event, 'staff')">Staff</p>
+    </div>
+    <div class="login">
+      <p>Welcome, <b>{{ sessions }}</b></p>
+    </div>
+  </nav>
+  <div id="student" class="tabcontent">
+    <h4>Student Form</h4>
+    <div class="choice">
+      <div onclick="openViews(event, 'borrow-form')" class="borrow">
+        <h4>Borrow</h4>
+      </div>
+      <div onclick="openViews(event, 'return-form')" class="return">
+        <h4>Return</h4>
+      </div>
+    </div>
+    <div class="content">
+      <div id="borrow-form" class="tabcontents">
+        <h4>Borrow Form</h4>
+        <form action="{{ url_for('add_student') }}" , method="post">
+          <div class="input">
+            <label for="">Student ID Number</label>
+            <input required type="text" name="id_number" placeholder="Enter Student ID Number">
+          </div>
+          <div class="input">
+            <label for="">First Name</label>
+            <input required type="text" name="first_name" placeholder="Enter First Name">
+          </div>
+          <div class="input">
+            <label for="">Last Name</label>
+            <input required type="text" name="last_name" placeholder="Enter Last Name">
+          </div>
+          <div class="input">
+            <label for="">Student Class</label>
+            <input required type="text" name="student_class" placeholder="Enter Student Class">
+          </div>
+          <div class="input">
+            <label for="">Select a book</label>
+            <select required name="book" id="">
+              {% for book in books %}
+              <option value="{{ book.id }}">{{ book.title }} by {{ book.author }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="input">
+            <label for="">Return Date</label>
+            <input required type="date" name="return_date" placeholder="">
+          </div>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+      <div id="return-form" class="tabcontents">
+        <h4>Return Form</h4>
+        <div class="bookings">
+          {% for booking in bookings if booking.student %}
+          <a href="{{ url_for('return_book', booking_id=booking.id) }}">
+            <div class="booking-item">
+              {% if booking.return_date.strftime("%Y-%m-%d") < todays_date %} <span id="overdue">Overdue</span>
+                {% endif %}
+                <p>Booking ID - {{ booking.booking_id_number }}</p>
+                <p>Date issued - {{ booking.issue_date }}</p>
+                <p>Date to be returned - {{ booking.return_date }}</p>
+                <p>
+                  {% for student in students if student.id == booking.student %}
+                  {{ student.first_name }} {{ student.last_name }}
+                  {% endfor %}
+                </p>
+                <p>
+                  {% for book in books if book.id == booking.book %}
+                  {{ book.title }} by {{ book.author }}
+                  {% endfor %}
+                </p>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="books" class="tabcontent">
+    <h4>
+      <button id="modal">Add New Book</button>
+      Books
+      <input type="text" id="search-book" placeholder="Search for a book">
+    </h4>
+    <div class="all-books">
+      <table>
+        <tr id="tr">
+          <th>Book ID Number</th>
+          <th>Book Title</th>
+          <th>Book author</th>
+          <th>Book Price</th>
+          <th>Book Quantity</th>
+        </tr>
+        {% for book in books %}
+        <tr id="books-data">
+          <td>{{ book.book_id_number }}</td>
+          <td>{{ book.title }}</td>
+          <td>{{ book.author }}</td>
+          <td>{{ book.price }}</td>
+          <td>{{ book.quantity }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+  <div id="staff" class="tabcontent">
+    <h4>Staff Form</h4>
+    <div class="choice">
+      <div onclick="openViewz(event, 'borrower-form')" class="borrow">
+        <h4>Borrow</h4>
+      </div>
+      <div onclick="openViewz(event, 'return-forms')" class="return">
+        <h4>Return</h4>
+      </div>
+    </div>
+    <div class="content">
+      <div id="borrower-form" class="tabcontentz">
+        <h4>Borrow Form</h4>
+        <form action="{{ url_for('add_staff') }}" , method="post">
+          <div class="input">
+            <label for="">Staff ID Number</label>
+            <input required type="text" name="id_number" placeholder="Enter Staff ID Number">
+          </div>
+          <div class="input">
+            <label for="">First Name</label>
+            <input required type="text" name="first_name" placeholder="Enter First Name">
+          </div>
+          <div class="input">
+            <label for="">Last Name</label>
+            <input required type="text" name="last_name" placeholder="Enter Last Name">
+          </div>
+          <div class="input">
+            <label for="">Email Address</label>
+            <input required type="email" name="email_address" placeholder="Enter Email Address">
+          </div>
+          <div class="input">
+            <label for="">Phone Number</label>
+            <input required type="number" name="phone_number" placeholder="Enter Phone Number">
+          </div>
+          <div class="input">
+            <label for="">Select a book</label>
+            <select required name="book" id="">
+              {% for book in books %}
+              <option value="{{ book.id }}">{{ book.title }} by {{ book.author }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div id="fit" class="input">
+            <label for="">Return Date</label>
+            <input required type="date" name="return_date" placeholder="">
+          </div>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+      <div id="return-forms" class="tabcontentz">
+        <h4>Return Form</h4>
+        <div class="bookings">
+          {% for booking in bookings if booking.staff %}
+          <a href="{{ url_for('return_book', booking_id=booking.id) }}">
+            <div class="booking-item">
+              {% if booking.return_date.strftime("%Y-%m-%d") < todays_date %} <span id="overdue">Overdue</span>
+                {% endif %}
+                <p>Booking ID - {{ booking.booking_id_number }}</p>
+                <p>Date issued - {{ booking.issue_date }}</p>
+                <p>Date to be returned - {{ booking.return_date }}</p>
+                <p>
+                  {% for staff in staffs if staff.id == booking.staff %}
+                  Borrower - {{ staff.first_name }} {{ staff.last_name }}
+                  {% endfor %}
+                </p>
+                <p>
+                  {% for book in books if book.id == booking.book %}
+                  {{ book.title }} by {{ book.author }}
+                  {% endfor %}
+                </p>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+</body>
+
+</html>
