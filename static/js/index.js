@@ -55,9 +55,48 @@ $(document).ready(function () {
   });
 });
 
+$(document).ready(function () {
+  $("#search-for-book").on("keyup", function () {
+    var value = $(this).val().toLowerCase();
+    $(".inputs #option").filter(function () {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});
+
+$(document).ready(function () {
+  $("#search-for-books").on("keyup", function () {
+    var value = $(this).val().toLowerCase();
+    $(".inputz #options").filter(function () {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});
+
+$(document).ready(function () {
+  $("#search-for-bookz").on("keyup", function () {
+    var value = $(this).val().toLowerCase();
+    $(".bookings .booking-item").filter(function () {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});
+
+$(document).ready(function () {
+  $("#search-for-bookzz").on("keyup", function () {
+    var value = $(this).val().toLowerCase();
+    $(".bookings .booking-item").filter(function () {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});
+
 const modal = document.querySelector(".modal");
 const close = document.querySelector("#close");
+const closez = document.querySelector("#closez");
 const modalbtn = document.querySelector("#modal");
+const overdue = document.querySelector(".overdue");
+const modalz = document.querySelector(".modalz");
 
 modalbtn.addEventListener("click", () => {
   modal.style.display = "flex";
@@ -65,4 +104,12 @@ modalbtn.addEventListener("click", () => {
 
 close.addEventListener("click", () => {
   modal.style.display = "none";
+});
+
+closez.addEventListener("click", () => {
+  modalz.style.display = "none";
+});
+
+overdue.addEventListener("click", () => {
+  modalz.style.display = "flex";
 });

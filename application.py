@@ -1,8 +1,7 @@
-from time import strftime
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, json
 from models import *
 import random, datetime
-from datetime import datetime
+from datetime import datetime, date
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = 'mssql://@KEVINKAGWIMA/library?driver=SQL SERVER'
@@ -101,10 +100,28 @@ def return_book(booking_id):
   booking = Bookings.query.get(booking_id)
   book = Books.query.filter_by(id=booking.book).first()
   book.quantity = book.quantity + 1
+  return_date = booking.return_date
+  todays_date = date.today()
   db.session.delete(booking)
   db.session.commit()
-  flash("Book returned successfully", category="success")
+  if return_date < todays_date:
+    diff = todays_date - return_date
+    fine = diff.days * 10
+    flash(f"Your book is overdue by {diff.days} days, you'll pay a fine of {fine} Kshs", category="danger")
+  else:
+    flash("Book returned successfully", category="success")
   return redirect(url_for('home'))
+
+# @app.route("/pay-fine", methods=["POST", "GET"])
+# def pay_fine():
+#   fine_payed = request.form.get("fine")
+#   difference = fine - fine_payed
+#   if difference == 0:
+#     flash(f"Your fine of Kshs {fine} has been cleared successfully", category="success")
+#   else:
+#     flash(f"Your fine of Kshs {fine} has been cleared partly. You are remaining with Kshs {difference}", category="danger")
+
+#   return redirect(url_for('home'))
 
 @app.route("/add-book", methods=["POST", "GET"])
 def add_book():

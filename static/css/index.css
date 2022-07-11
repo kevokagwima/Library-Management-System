@@ -47,6 +47,7 @@ nav {
   font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
     "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
   color: tomato;
+  position: relative;
 }
 
 .content {
@@ -175,7 +176,8 @@ a {
   overflow: auto;
 }
 
-.modal {
+.modal,
+.modalz {
   position: absolute;
   inset: 0;
   z-index: 10;
@@ -192,7 +194,8 @@ a {
   padding: 0.5rem 1rem;
 }
 
-#close {
+#close,
+#closez {
   font-size: 2rem;
   text-align: right;
   color: red;
@@ -243,7 +246,11 @@ a {
     "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 }
 
-#search-book {
+#search-book,
+#search-for-book,
+#search-for-books,
+#search-for-bookz,
+#search-for-bookzz {
   position: absolute;
   right: 4rem;
   padding: 8px;
@@ -255,6 +262,13 @@ a {
   font-family: "Dancing Script", cursive;
   font-family: "Varela Round", sans-serif;
   text-transform: capitalize;
+}
+
+#search-for-book,
+#search-for-books,
+#search-for-bookz,
+#search-for-bookzz {
+  right: 0;
 }
 
 table {
