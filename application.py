@@ -33,8 +33,9 @@ def home():
     students = Student.query.all()
     staffs = Staff.query.all()
     todays_date = datetime.now().strftime("%Y-%m-%d")
+    today_date = date.today()
 
-    return render_template("index.html", sessions=sessions, books=books, bookings=bookings, students=students, todays_date=todays_date, staffs=staffs)
+    return render_template("index.html", sessions=sessions, books=books, bookings=bookings, students=students, todays_date=todays_date, staffs=staffs,today_date=today_date)
 
   return render_template("index.html")
 
@@ -95,7 +96,7 @@ def add_staff():
 
   return redirect(url_for('home'))
 
-@app.route("/return-book/<int:booking_id>", methods=["POST"])
+@app.route("/return-book/<int:booking_id>", methods=["POST","GET"])
 def return_book(booking_id):
   booking = Bookings.query.get(booking_id)
   book = Books.query.filter_by(id=booking.book).first()

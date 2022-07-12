@@ -141,10 +141,33 @@
           <input type="text" id="search-for-bookz" placeholder="Search for a booking">
         </h4>
         <div class="bookings">
-          {% for booking in bookings if booking.student %}
-          <div class="overdue booking-item" data-booking="{{ booking.id }}">
+          {% for booking in bookings if booking.student and booking.return_date.strftime("%Y-%m-%d") < todays_date %} <a
+          href="{{ url_for('return_book', booking_id=booking.id) }}">
+          <div class="booking-item" data-booking="{{ booking.id }}">
             {% if booking.return_date.strftime("%Y-%m-%d") < todays_date %} <span id="overdue">Overdue</span>
               {% endif %}
+              <p>Booking ID - {{ booking.booking_id_number }}</p>
+              <p>Date issued - {{ booking.issue_date }}</p>
+              <p>Date to be returned - {{ booking.return_date }}</p>
+              <p>
+                {% for student in students if student.id == booking.student %}
+                Borrower: {{ student.first_name }} {{ student.last_name }}
+                {% endfor %}
+              </p>
+              <p>
+                {% for book in books if book.id == booking.book %}
+                {{ book.title }} by {{ book.author }}
+                {% endfor %}
+              </p>
+              {% set return_date = booking.return_date %}
+              {% set today_date = today_date %}
+              {% set diff = today_date - booking.return_date %}
+              <p id="days">Overdue by {{ diff.days }} Days</p>
+          </div>
+          </a>
+          {% endfor %}
+          {% for booking in bookings if booking.student and booking.return_date.strftime("%Y-%m-%d") > todays_date %}
+          <div class="overdue booking-item" data-booking="{{ booking.id }}">
               <p>Booking ID - {{ booking.booking_id_number }}</p>
               <p>Date issued - {{ booking.issue_date }}</p>
               <p>Date to be returned - {{ booking.return_date }}</p>
@@ -249,10 +272,33 @@
           <input type="text" id="search-for-bookzz" placeholder="Search for a staff booking">
         </h4>
         <div class="bookings">
-          {% for booking in bookings if booking.staff %}
+          {% for booking in bookings if booking.staff and  booking.return_date.strftime("%Y-%m-%d") < todays_date %} <a
+            href="{{ url_for('return_book', booking_id=booking.id) }}">
+            <div class="booking-item" data-booking="{{ booking.id }}">
+              {% if booking.return_date.strftime("%Y-%m-%d") < todays_date %} <span id="overdue">Overdue</span>
+                {% endif %}
+                <p>Booking ID - {{ booking.booking_id_number }}</p>
+                <p>Date issued - {{ booking.issue_date }}</p>
+                <p>Date to be returned - {{ booking.return_date }}</p>
+                <p>
+                  {% for staff in staffs if staff.id == booking.staff %}
+                  Borrower: {{ staff.first_name }} {{ staff.last_name }}
+                  {% endfor %}
+                </p>
+                <p>
+                  {% for book in books if book.id == booking.book %}
+                  {{ book.title }} by {{ book.author }}
+                  {% endfor %}
+                </p>
+                {% set return_date = booking.return_date %}
+                {% set today_date = today_date %}
+                {% set diff = today_date - booking.return_date %}
+                <p id="days">Overdue by {{ diff.days }} Days</p>
+            </div>
+            </a>
+            {% endfor %}
+          {% for booking in bookings if booking.staff and booking.return_date.strftime("%Y-%m-%d") > todays_date %}
           <div data-booking="{{ booking.id }}" class="overdue booking-item">
-            {% if booking.return_date.strftime("%Y-%m-%d") < todays_date %} <span id="overdue">Overdue</span>
-              {% endif %}
               <p>Booking ID - {{ booking.booking_id_number }}</p>
               <p>Date issued - {{ booking.issue_date }}</p>
               <p>Date to be returned - {{ booking.return_date }}</p>
