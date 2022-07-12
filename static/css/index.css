@@ -214,6 +214,43 @@ a {
   padding: 2rem;
 }
 
+.modalz .modal-content .modal-body {
+  text-align: center;
+}
+
+.modalz .modal-content .modal-body p {
+  font-size: 1.5rem;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.modal-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 3rem;
+}
+
+.modal-btn button {
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+.delete {
+  background-color: green;
+}
+
+.cancel {
+  background-color: red;
+}
+
 .modal-body form {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

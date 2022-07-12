@@ -95,7 +95,7 @@ def add_staff():
 
   return redirect(url_for('home'))
 
-@app.route("/return-book/<int:booking_id>")
+@app.route("/return-book/<int:booking_id>", methods=["POST"])
 def return_book(booking_id):
   booking = Bookings.query.get(booking_id)
   book = Books.query.filter_by(id=booking.book).first()
@@ -111,17 +111,6 @@ def return_book(booking_id):
   else:
     flash("Book returned successfully", category="success")
   return redirect(url_for('home'))
-
-# @app.route("/pay-fine", methods=["POST", "GET"])
-# def pay_fine():
-#   fine_payed = request.form.get("fine")
-#   difference = fine - fine_payed
-#   if difference == 0:
-#     flash(f"Your fine of Kshs {fine} has been cleared successfully", category="success")
-#   else:
-#     flash(f"Your fine of Kshs {fine} has been cleared partly. You are remaining with Kshs {difference}", category="danger")
-
-#   return redirect(url_for('home'))
 
 @app.route("/add-book", methods=["POST", "GET"])
 def add_book():

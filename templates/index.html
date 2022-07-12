@@ -48,22 +48,20 @@
       </div>
     </div>
   </div>
-  <!-- <div class="modalz">
+  <div class="modalz">
     <div class="modal-content">
       <div class="modal-header">
         <p id="closez">&times;</p>
       </div>
       <div class="modal-body">
-        <form action="#" , method="post">
-          <div class="input">
-            <label for="">Fine Amount</label>
-            <input type="text" name="fine" id="" placeholder="Enter The Fine Amount" required>
-          </div>
-          <button type="submit">Pay Fine</button>
-        </form>
+        <p>Are you sure you want to clear this booking</p>
+        <div class="modal-btn">
+          <button onclick="sendData()" class="delete">Delete</button>
+          <button class="cancel">Cancel</button>
+        </div>
       </div>
     </div>
-  </div> -->
+  </div>
   {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
   <div class="tops">
@@ -144,25 +142,23 @@
         </h4>
         <div class="bookings">
           {% for booking in bookings if booking.student %}
-          <a href="{{ url_for('return_book', booking_id=booking.id) }}">
-            <div class="booking-item">
-              {% if booking.return_date.strftime("%Y-%m-%d") < todays_date %} <span id="overdue">Overdue</span>
-                {% endif %}
-                <p>Booking ID - {{ booking.booking_id_number }}</p>
-                <p>Date issued - {{ booking.issue_date }}</p>
-                <p>Date to be returned - {{ booking.return_date }}</p>
-                <p>
-                  {% for student in students if student.id == booking.student %}
-                  Borrower: {{ student.first_name }} {{ student.last_name }}
-                  {% endfor %}
-                </p>
-                <p>
-                  {% for book in books if book.id == booking.book %}
-                  {{ book.title }} by {{ book.author }}
-                  {% endfor %}
-                </p>
-            </div>
-          </a>
+          <div class="overdue booking-item" data-booking="{{ booking.id }}">
+            {% if booking.return_date.strftime("%Y-%m-%d") < todays_date %} <span id="overdue">Overdue</span>
+              {% endif %}
+              <p>Booking ID - {{ booking.booking_id_number }}</p>
+              <p>Date issued - {{ booking.issue_date }}</p>
+              <p>Date to be returned - {{ booking.return_date }}</p>
+              <p>
+                {% for student in students if student.id == booking.student %}
+                Borrower: {{ student.first_name }} {{ student.last_name }}
+                {% endfor %}
+              </p>
+              <p>
+                {% for book in books if book.id == booking.book %}
+                {{ book.title }} by {{ book.author }}
+                {% endfor %}
+              </p>
+          </div>
           {% endfor %}
         </div>
       </div>
@@ -254,25 +250,23 @@
         </h4>
         <div class="bookings">
           {% for booking in bookings if booking.staff %}
-          <a href="{{ url_for('return_book', booking_id=booking.id) }}">
-            <div class="booking-item">
-              {% if booking.return_date.strftime("%Y-%m-%d") < todays_date %} <span id="overdue">Overdue</span>
-                {% endif %}
-                <p>Booking ID - {{ booking.booking_id_number }}</p>
-                <p>Date issued - {{ booking.issue_date }}</p>
-                <p>Date to be returned - {{ booking.return_date }}</p>
-                <p>
-                  {% for staff in staffs if staff.id == booking.staff %}
-                  Borrower - {{ staff.first_name }} {{ staff.last_name }}
-                  {% endfor %}
-                </p>
-                <p>
-                  {% for book in books if book.id == booking.book %}
-                  {{ book.title }} by {{ book.author }}
-                  {% endfor %}
-                </p>
-            </div>
-          </a>
+          <div data-booking="{{ booking.id }}" class="overdue booking-item">
+            {% if booking.return_date.strftime("%Y-%m-%d") < todays_date %} <span id="overdue">Overdue</span>
+              {% endif %}
+              <p>Booking ID - {{ booking.booking_id_number }}</p>
+              <p>Date issued - {{ booking.issue_date }}</p>
+              <p>Date to be returned - {{ booking.return_date }}</p>
+              <p>
+                {% for staff in staffs if staff.id == booking.staff %}
+                Borrower - {{ staff.first_name }} {{ staff.last_name }}
+                {% endfor %}
+              </p>
+              <p>
+                {% for book in books if book.id == booking.book %}
+                {{ book.title }} by {{ book.author }}
+                {% endfor %}
+              </p>
+          </div>
           {% endfor %}
         </div>
       </div>
@@ -280,15 +274,22 @@
   </div>
 
   <script src="{{ url_for('static', filename='js/index.js') }}"></script>
-  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
   <script>
     function sendData() {
-      const data = document.querySelector(".overdue")
-      $.ajax({
-        url: "/return-book/8",
-        type: "POST",
-        contentType: "application/json",
-        data: JSON.stringify(data.dataset.fine)
+      const data = document.querySelectorAll(".overdue");
+      data.forEach((p) => {
+        p.addEventListener("click", () => {
+          const content = p.dataset.booking;
+          modalz.style.display = "flex";
+          $.ajax({
+            url: "/return-book/" + `${content}`,
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(content),
+          });
+          window.location.replace("/home");
+          alert("Booking" + " " + `${content}` + " " + "deleted successfully");
+        });
       });
     }
   </script>

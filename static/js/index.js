@@ -94,9 +94,11 @@ $(document).ready(function () {
 const modal = document.querySelector(".modal");
 const close = document.querySelector("#close");
 const closez = document.querySelector("#closez");
+const closes = document.querySelector(".cancel");
 const modalbtn = document.querySelector("#modal");
-const overdue = document.querySelector(".overdue");
+const overdue = document.querySelectorAll(".overdue");
 const modalz = document.querySelector(".modalz");
+const deletes = document.querySelector(".delete");
 
 modalbtn.addEventListener("click", () => {
   modal.style.display = "flex";
@@ -110,6 +112,12 @@ closez.addEventListener("click", () => {
   modalz.style.display = "none";
 });
 
-overdue.addEventListener("click", () => {
-  modalz.style.display = "flex";
+closes.addEventListener("click", () => {
+  modalz.style.display = "none";
+});
+
+overdue.forEach((p) => {
+  p.addEventListener("click", () => {
+    modalz.style.display = "flex";
+  });
 });
